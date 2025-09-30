@@ -130,12 +130,37 @@ scraper.save_to_csv(productos, filename="mis_productos.csv")
 web-scraper-doctorpet/
 │
 ├── scraper.py           # Script principal del scraper
+├── test_scraper.py      # Script de pruebas con HTML de ejemplo
 ├── requirements.txt     # Dependencias del proyecto
 ├── README.md           # Este archivo
 ├── .gitignore          # Archivos a ignorar en git
 │
 └── doctorpet_alimentos_*.csv  # Archivos CSV generados (ignorados por git)
 ```
+
+## 🧪 Testing
+
+El proyecto incluye un script de pruebas (`test_scraper.py`) que valida la funcionalidad del scraper usando HTML de ejemplo.
+
+Para ejecutar las pruebas:
+
+```bash
+python test_scraper.py
+```
+
+Esto validará:
+- ✅ Extracción correcta de información de productos
+- ✅ Manejo de diferentes formatos de precio (regular y en oferta)
+- ✅ Detección de disponibilidad (disponible/agotado)
+- ✅ Generación correcta del archivo CSV
+
+**¿Por qué es importante testing?**
+
+El testing con HTML de ejemplo nos permite:
+1. Verificar que la lógica de extracción funciona correctamente
+2. No depender de la disponibilidad del sitio web real
+3. Detectar problemas antes de ejecutar el scraper completo
+4. Documentar el comportamiento esperado del código
 
 ## 📊 Formato del CSV
 
@@ -277,8 +302,46 @@ Asegúrate de abrir el CSV con codificación UTF-8. En Excel:
 
 Durante el desarrollo se identificaron los siguientes puntos:
 
-- **DNS/Conectividad**: En algunos entornos, el dominio `doctorpet.co` puede no resolver correctamente debido a configuraciones de red o restricciones DNS
-- **Solución**: El código incluye reintentos automáticos y manejo robusto de errores de conexión
+- **DNS/Conectividad**: En algunos entornos (como ambientes de CI/CD, contenedores, o redes corporativas), el dominio `doctorpet.co` puede no resolver correctamente debido a:
+  - Configuraciones de red restrictivas
+  - Restricciones DNS
+  - Firewalls que bloquean ciertos dominios
+  - El sitio puede estar temporalmente inaccesible
+  
+- **Solución implementada**: El código incluye:
+  - Reintentos automáticos (hasta 3 intentos por petición)
+  - Manejo robusto de errores de conexión
+  - Logging detallado para facilitar diagnóstico
+  - Mensajes informativos sobre posibles causas de fallo
+
+- **Cómo probar**: Si encuentras problemas de conectividad:
+  1. Verifica que puedes acceder a https://doctorpet.co desde tu navegador
+  2. Ejecuta `test_scraper.py` para validar que la lógica de extracción funciona
+  3. Si el sitio es accesible desde navegador pero no desde el script, puede ser necesario ajustar headers o usar proxies
+
+### Ejemplo de salida exitosa:
+
+Cuando el scraper funciona correctamente, verás una salida similar a:
+
+```
+╔══════════════════════════════════════════════════════════════════════════╗
+║                   DOCTORPET.CO WEB SCRAPER                              ║
+║                    Categoría: Alimentos                                 ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+2025-09-30 18:03:56 - INFO - Scraper inicializado para: https://doctorpet.co/producto-category/alimentos/
+2025-09-30 18:03:56 - INFO - INICIANDO SCRAPING DE CATEGORÍA
+2025-09-30 18:03:56 - INFO - --- Página 1 ---
+2025-09-30 18:03:58 - INFO - ✓ Petición exitosa: 200
+2025-09-30 18:03:58 - INFO - Encontrados 24 productos en esta página
+2025-09-30 18:04:02 - INFO - ✓ Extraídos 24 productos de esta página
+2025-09-30 18:04:02 - INFO - Total acumulado: 24 productos
+2025-09-30 18:04:02 - INFO - → Siguiente página encontrada
+...
+2025-09-30 18:05:15 - INFO - SCRAPING FINALIZADO: 72 productos totales
+2025-09-30 18:05:15 - INFO - ✓ Archivo guardado exitosamente: doctorpet_alimentos_20250930_180515.csv
+2025-09-30 18:05:15 - INFO - 🎉 ¡Scraping completado exitosamente!
+```
 
 ## 📚 Recursos para Aprender Más
 
