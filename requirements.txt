@@ -1,0 +1,9 @@
+# Web scraping libraries
+# requests: Para hacer peticiones HTTP a la página web
+requests>=2.31.0
+
+# beautifulsoup4: Para parsear y extraer datos del HTML
+beautifulsoup4>=4.12.0
+
+# lxml: Parser rápido y eficiente para BeautifulSoup
+lxml>=4.9.0
